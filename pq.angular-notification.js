@@ -11,14 +11,24 @@
                         var type = 0;
                         var notificationType = [];
 
-                        var settings = {
-                            templateUrlError: '/templates/notification/error.html',
-                            templateUrlSuccess: '',
-                            templateUrlWarning: ''
-                        };
 
-                        var pushNotificationType = function(string) {
-                            return notificationType.push(string);
+                        var settings = {
+                            defaultTemplate: {
+                                error: 'notification/error.html',
+                                success: 'notification/success.html',
+                                info: 'notification/info.html',
+                                warning: 'notification/warning.html'
+                            },
+                            templateUrl: function(obj) {
+                                if (typeof obj === 'object') {
+                                    this.defaultTemplate.error = obj.error ? obj.error : this.defaultTemplate.error;
+                                    this.defaultTemplate.success = obj.success ? obj.success : this.defaultTemplate.success;
+                                    this.defaultTemplate.info = obj.info ? obj.info : this.defaultTemplate.info;
+                                    this.defaultTemplate.warning = obj.warning ? obj.warning : this.defaultTemplate.warning;
+                                }
+                            }
+
+
                         };
 
 
@@ -46,6 +56,11 @@
 
                         var setup = function() {
                             var parameter;
+                            var notificationType = ['success', 'info', 'warrning', 'error'];
+                            $rootScope.pqNotifications = [];
+
+
+                            console.log(notificationType);
 
                             if (notificationType.length === 0) {
                                 throw new Error("You should give some setup names in arguments NotificationService.setup()");
@@ -59,7 +74,7 @@
                                         return callback();
                                     } else if (type === "string") {
                                         $rootScope[notificationType] = callback;
-                                        return $rootScope.message = callback;
+                                        return $rootScope.pqnotificationmessage = callback;
                                     }
                                 });
 
@@ -78,32 +93,53 @@
                     }
 
                     return {
-                        pushNotificationType: pushNotificationType,
                         setup: setup,
                         call: call,
                         settings: settings
                     };
                 }
         );
-        angular.module('pqNotification.directive.error', ['ng']).directive('notificationerror', ['$notification',
+        angular.module('pqNotification.directive', ['ng']).directive('notification', ['$notification',
             function($notification) {
 
+                var template;
+
                 var controller = function($scope, $notification) {
-                    $notification.pushNotificationType('error');;
+                    $notification.setup();
                 };
 
                 var link = function(scope, element, attrs) {
+
+                    console.log($notification.settings.defaultTemplate);
+
                     scope.$on('error', function() {
-                        element.parent().append("<div class='notification'><p><span style='font-weight: bold'>Błąd: </span>" + scope.message + "</p></div>");
+                        template = 'error?';
+                        scope.pqNotifications.push({
+                            title: "Błąd",
+                            message: scope.pqnotificationmessage
+                        });
+
                     });
+
+                    scope.$on('success', function() {
+                        scope.pqNotifications.push({
+                            title: "Udało się",
+                            message: scope.pqnotificationmessage
+                        })
+                    });
+
+                    scope.getTemplateUrl = function() {
+                        return $notification.settings.defaultTemplate.error;
+                    };
+
                 };
 
 
                 return {
                     restrict: 'E',
                     replace: true,
-                    // templateUrl: 'notification/error.html',
                     controller: controller,
+                    template: '<div ng-include="getTemplateUrl()"></div>',
                     link: link
                 };
 
@@ -113,14 +149,13 @@
 
         angular.module('pqNotification.setup', ['ng']).run(
             function($rootScope, $notification) {
-                $rootScope.$on('$viewContentLoaded', function() {
-                    $notification.setup();
-                    console.log($notification.settings);
 
-                });
+                // $rootScope.$on('$viewContentLoaded', function() {
+                //     $notification.setup();
+                // });
             }
         );
 
-        angular.module('pqNotification', ['pqNotification.factory', 'pqNotification.directive.error', 'pqNotification.setup']);
+        angular.module('pqNotification', ['pqNotification.factory', 'pqNotification.directive', 'pqNotification.setup']);
 
     })();
