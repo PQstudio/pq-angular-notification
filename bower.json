@@ -1,6 +1,6 @@
 {
-  "name": "pqnotification",
-  "main": "pqnotification.js",
+  "name": "pq.notification",
+  "main": "pq.notification.js",
   "version": "0.0.0",
   "authors": [
     "PQ studio <kontakt@pqstudio.pl",
