@@ -21,13 +21,12 @@
                             },
                             templateUrl: function(obj) {
                                 if (typeof obj === 'object') {
-                                    this.defaultTemplate.error = obj.error ? obj.error : this.defaultTemplate.error;
-                                    this.defaultTemplate.success = obj.success ? obj.success : this.defaultTemplate.success;
-                                    this.defaultTemplate.info = obj.info ? obj.info : this.defaultTemplate.info;
-                                    this.defaultTemplate.warning = obj.warning ? obj.warning : this.defaultTemplate.warning;
+                                    this.defaultTemplate.error = obj.hasOwnProperty('error') ? obj.error : this.defaultTemplate.error;
+                                    this.defaultTemplate.success = obj.hasOwnProperty('success') ? obj.success : this.defaultTemplate.success;
+                                    this.defaultTemplate.info = obj.hasOwnProperty('info') ? obj.info : this.defaultTemplate.info;
+                                    this.defaultTemplate.warning = obj.hasOwnProperty('warning') ? obj.warning : this.defaultTemplate.warning;
                                 }
                             }
-
 
                         };
 
