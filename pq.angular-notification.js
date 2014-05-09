@@ -80,9 +80,11 @@
                             };
 
                             for (var j in notificationType) {
-                                parameter = notificationType[j];
-                                console.log(parameter);
-                                onFunction(parameter);
+                                if (notificationType.hasOwnProperty(j)) {
+                                    parameter = notificationType[j];
+                                    console.log(parameter);
+                                    onFunction(parameter);
+                                }
                             }
 
                         };
