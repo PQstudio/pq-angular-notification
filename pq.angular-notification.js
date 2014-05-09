@@ -47,8 +47,6 @@
                      
                      **/
                         var call = function(name, inject) {
-                            console.log(name);
-                            console.log(inject);
                             $rootScope.$emit(name, inject);
                             $rootScope.$broadcast(name, inject);
                         };
@@ -56,10 +54,6 @@
                         var setup = function() {
                             var parameter;
                             var notificationType = ['success', 'info', 'warrning', 'error'];
-                            $rootScope.pqNotifications = [];
-
-
-                            console.log(notificationType);
 
                             if (notificationType.length === 0) {
                                 throw new Error("You should give some setup names in arguments NotificationService.setup()");
@@ -82,7 +76,6 @@
                             for (var j in notificationType) {
                                 if (notificationType.hasOwnProperty(j)) {
                                     parameter = notificationType[j];
-                                    console.log(parameter);
                                     onFunction(parameter);
                                 }
                             }
@@ -100,52 +93,69 @@
                     };
                 }
         );
-        angular.module('pqNotification.directive', ['ng']).directive('notification', ['$notification',
-            function($notification) {
+        angular.module('pqNotification.directive', ['ng'])
+            .directive('pqnotification', ['$notification',
+                function($notification) {
 
-                var template;
+                    var template;
 
-                var controller = function($scope, $notification) {
-                    $notification.setup();
-                };
-
-                var link = function(scope, element, attrs) {
-
-                    console.log($notification.settings.defaultTemplate);
-
-                    scope.$on('error', function() {
-                        template = 'error?';
-                        scope.pqNotifications.push({
-                            title: "Błąd",
-                            message: scope.pqnotificationmessage
-                        });
-
-                    });
-
-                    scope.$on('success', function() {
-                        scope.pqNotifications.push({
-                            title: "Udało się",
-                            message: scope.pqnotificationmessage
-                        })
-                    });
-
-                    scope.getTemplateUrl = function() {
-                        return $notification.settings.defaultTemplate.error;
+                    var controller = function($scope, $notification) {
+                        $scope.pqNotifications = [];
+                        $notification.setup();
                     };
 
-                };
+                    var link = function(scope, element, attrs) {
+
+                        scope.$on('error', function() {
+                            template = 'error?';
+                            scope.pqNotifications.push({
+                                title: "Błąd",
+                                message: scope.pqnotificationmessage
+                            });
+
+                        });
+
+                        scope.$on('success', function() {
+                            scope.pqNotifications.push({
+                                title: "Udało się",
+                                message: scope.pqnotificationmessage
+                            })
+                        });
+
+                        scope.getTemplateUrl = function() {
+                            return $notification.settings.defaultTemplate.error;
+                        };
+
+                    };
 
 
-                return {
-                    restrict: 'E',
-                    replace: true,
-                    controller: controller,
-                    template: '<div ng-include="getTemplateUrl()"></div>',
-                    link: link
-                };
+                    return {
+                        restrict: 'E',
+                        replace: true,
+                        controller: controller,
+                        template: '<div ng-include="getTemplateUrl()"></div>',
+                        link: link
+                    };
 
-            }
-        ]);
+                }
+            ])
+            .directive('pqnotificationremove', [
+
+                function() {
+
+                    var link = function(scope, element, attrs) {
+                        element.click(function() {
+                            scope.pqNotifications.splice(element, 1);
+                            scope.$apply();
+                        });
+                    };
+
+                    return {
+                        restrict: 'A',
+                        link: link
+                    };
+                }
+            ]);
 
 
         angular.module('pqNotification.setup', ['ng']).run(
