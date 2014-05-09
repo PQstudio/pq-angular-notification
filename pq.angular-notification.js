@@ -13,18 +13,25 @@
 
 
                         var settings = {
-                            defaultTemplate: {
-                                error: 'notification/error.html',
-                                success: 'notification/success.html',
-                                info: 'notification/info.html',
-                                warning: 'notification/warning.html'
+                            defaults: {
+                                template: {
+                                    error: 'notification/error.html',
+                                    success: 'notification/success.html',
+                                    info: 'notification/info.html',
+                                    warning: 'notification/warning.html'
+                                },
+                                remove: {
+                                    click: true,
+                                    timeout: false
+                                }
+
                             },
                             templateUrl: function(obj) {
                                 if (typeof obj === 'object') {
-                                    this.defaultTemplate.error = obj.hasOwnProperty('error') ? obj.error : this.defaultTemplate.error;
-                                    this.defaultTemplate.success = obj.hasOwnProperty('success') ? obj.success : this.defaultTemplate.success;
-                                    this.defaultTemplate.info = obj.hasOwnProperty('info') ? obj.info : this.defaultTemplate.info;
-                                    this.defaultTemplate.warning = obj.hasOwnProperty('warning') ? obj.warning : this.defaultTemplate.warning;
+                                    this.defaults.template.error = obj.hasOwnProperty('error') ? obj.error : this.defaults.template.error;
+                                    this.defaults.template.success = obj.hasOwnProperty('success') ? obj.success : this.defaults.template.success;
+                                    this.defaults.template.info = obj.hasOwnProperty('info') ? obj.info : this.defaults.template.info;
+                                    this.defaults.template.warning = obj.hasOwnProperty('warning') ? obj.warning : this.defaults.template.warning;
                                 }
                             }
 
@@ -123,7 +130,7 @@
                         });
 
                         scope.getTemplateUrl = function() {
-                            return $notification.settings.defaultTemplate.error;
+                            return $notification.settings.defaults.template.error;
                         };
 
                     };
