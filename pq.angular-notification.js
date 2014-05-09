@@ -33,6 +33,12 @@
                                     this.defaults.template.info = obj.hasOwnProperty('info') ? obj.info : this.defaults.template.info;
                                     this.defaults.template.warning = obj.hasOwnProperty('warning') ? obj.warning : this.defaults.template.warning;
                                 }
+                            }, 
+                            remove: function(obj) {
+                                if (typeof obj === 'object') {
+                                    this.defaults.remove.click = obj.hasOwnProperty('click') ? obj.click : this.defaults.remove.click;
+                                    this.defaults.remove.timeout = obj.hasOwnProperty('timeout') ? obj.timeout : this.defaults.remove.timeout;
+                                }
                             }
 
                         };
