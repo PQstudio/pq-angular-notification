@@ -22,7 +22,8 @@
                                 },
                                 remove: {
                                     click: true,
-                                    timeout: false
+                                    timeout: false,
+                                    time: 2000
                                 }
 
                             },
@@ -33,11 +34,12 @@
                                     this.defaults.template.info = obj.hasOwnProperty('info') ? obj.info : this.defaults.template.info;
                                     this.defaults.template.warning = obj.hasOwnProperty('warning') ? obj.warning : this.defaults.template.warning;
                                 }
-                            }, 
+                            },
                             remove: function(obj) {
                                 if (typeof obj === 'object') {
                                     this.defaults.remove.click = obj.hasOwnProperty('click') ? obj.click : this.defaults.remove.click;
                                     this.defaults.remove.timeout = obj.hasOwnProperty('timeout') ? obj.timeout : this.defaults.remove.timeout;
+                                    this.defaults.remove.time = obj.hasOwnProperty('time') ? obj.time : this.defaults.remove.time;
                                 }
                             }
 
@@ -152,15 +154,24 @@
 
                 }
             ])
-            .directive('pqnotificationremove', [
-
-                function() {
-
+            .directive('pqnotificationremove', ['$notification', '$timeout',
+                function($notification, $timeout) {
                     var link = function(scope, element, attrs) {
-                        element.click(function() {
-                            scope.pqNotifications.splice(element, 1);
-                            scope.$apply();
-                        });
+                        var settings = $notification.settings.defaults.remove;
+                        console.log(settings);
+                        if (settings.click) {
+                            element.click(function() {
+                                scope.pqNotifications.splice(element, 1);
+                                scope.$apply();
+                            });
+                        }
+                        if (settings.timeout) {
+                            $timeout(function() {
+                                scope.pqNotifications.splice(element, 1);
+                                scope.$apply();
+                            }, settings.time)
+                        }
+
                     };
 
                     return {
