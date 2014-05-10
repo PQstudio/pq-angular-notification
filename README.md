@@ -16,7 +16,7 @@ angular.module("app", ['pqNotification'])
 ```
 3. If you want to change defaults settings inject $notification factory:
 ```javascript
-run(function($notification)
+run(function( $notification )
 ```
 4. Add directive to your html view when notification should be show
 ```html
