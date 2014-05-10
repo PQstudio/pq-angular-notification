@@ -25,15 +25,18 @@ run(function( $notification )
 
 ### Defaults settings
 Src to notification template
+
 ```javascript
 $notification.settings.templateUrl({
     error: 'notification/error.html',
     success: 'notification/success.html',
     info: 'notification/info.html',
     warning: 'notification/warning.html'
-});```
+});
+```
 
 Behavior to remove notification elements
+
 ```javascript
 $notification.settings.remove({
     click: true,
