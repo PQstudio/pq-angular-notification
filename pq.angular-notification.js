@@ -2,7 +2,7 @@
 
     (function() {
 
-        angular.module('pqNotification.factory', ['ng'])
+        angular.module('pqNotification.factory', ['ng', 'ngAnimate'])
             .factory('$notification',
                 function($rootScope) {
 
