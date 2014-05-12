@@ -165,7 +165,7 @@
                         restrict: 'E',
                         replace: true,
                         controller: controller,
-                        template: '<div ng-include="getTemplateUrl()"></div>',
+                        template: '<div ng-repeat="pqnotification in pqNotifications" ng-include="getTemplateUrl()"></div>',
                         link: link
                     };
 
