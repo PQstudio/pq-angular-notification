@@ -161,13 +161,13 @@
                         console.log(settings);
                         if (settings.click) {
                             element.click(function() {
-                                scope.pqNotifications.splice(element, 1);
+                                scope.pqNotifications.splice(scope.$index, 1);
                                 scope.$apply();
                             });
                         }
                         if (settings.timeout) {
                             $timeout(function() {
-                                scope.pqNotifications.splice(element, 1);
+                                scope.pqNotifications.splice(scope.$index, 1);
                                 scope.$apply();
                             }, settings.time)
                         }
