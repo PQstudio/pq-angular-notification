@@ -48,6 +48,4 @@ $notification.settings.remove({
 ### Todo
   - ng-repeat compile before include template
   - add few defaults notification styles
-  - add animate for show ang hide before remove element from scope
   - add settings for animate
-  - test removing element
