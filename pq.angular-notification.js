@@ -25,6 +25,14 @@
                                     click: true,
                                     timeout: false,
                                     time: 2000
+                                },
+                                httpHandler: {
+                                    included: true,
+                                    200: false,
+                                    201: false,
+                                    400: false,
+                                    401: false,
+                                    500: false
                                 }
 
                             },
@@ -41,6 +49,11 @@
                                     this.defaults.remove.click = obj.hasOwnProperty('click') ? obj.click : this.defaults.remove.click;
                                     this.defaults.remove.timeout = obj.hasOwnProperty('timeout') ? obj.timeout : this.defaults.remove.timeout;
                                     this.defaults.remove.time = obj.hasOwnProperty('time') ? obj.time : this.defaults.remove.time;
+                                }
+                            },
+                            httpHandler: function(obj) {
+                                if (typeof obj === 'object') {
+                                    this.defaults.httpHandler.included = obj.hasOwnProperty('included') ? obj.included : this.defaults.httpHandler.included;
                                 }
                             }
 
@@ -63,13 +76,13 @@
                      
                      **/
                         var call = function(name, inject) {
-                            $rootScope.$emit(name, inject);
+                            // $rootScope.$emit(name, inject);
                             $rootScope.$broadcast(name, inject);
                         };
 
                         var setup = function() {
                             var parameter;
-                            var notificationType = ['success', 'info', 'warrning', 'error'];
+                            var notificationType = ['success', 'info', 'warning', 'error'];
 
                             if (notificationType.length === 0) {
                                 throw new Error("You should give some setup names in arguments NotificationService.setup()");
@@ -105,7 +118,8 @@
                     return {
                         setup: setup,
                         call: call,
-                        settings: settings
+                        settings: settings,
+                        defaults: settings.defaults
                     };
                 }
         );
@@ -188,21 +202,39 @@
 
 
         angular.module('pqNotification.setup', ['ng']).config(
-            function($httpProvider) {
-                $httpProvider.interceptors.push(function($q, $notification) {
-                    return {
-                        'response': function(response) {
-                            console.log(response);
-                            return response || $q.when(response);
-                        },
-                        'responseError': function(rejection) {
-                            // if(rejection.status === 400) {
-                                $notification.call('error', rejection.status + ' ' + rejection.statusText);
-                            // }
-                            return $q.reject(rejection);
-                        }
+            function($httpProvider, $provide) {
+
+                $provide.factory('httpHandler', function($q, $notification) {
+                    var defaults = $notification.defaults;
+
+                    var response = function(response) {
+                        return response || $q.when(response);
                     };
+
+                    var responseError = function(rejection) {
+                        // if(rejection.status === 400) {
+                        $notification.call('error', rejection.status + ' ' + rejection.statusText);
+                        // }
+                        return $q.reject(rejection);
+                    };
+
+
+                    if (defaults.httpHandler.included) {
+                        return {
+                            'response': response,
+                            'responseError': responseError
+                        };
+                    } else {
+                        return {
+                            'request': function(config) {
+                                return config;
+                            }
+                        }
+                    }
+
                 });
+
+                $httpProvider.interceptors.push('httpHandler');
 
 
             }
