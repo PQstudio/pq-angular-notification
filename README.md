@@ -45,7 +45,14 @@ $notification.settings.remove({
 });
 ```
 
+```javascript
+$notification.settings.httpHandler({
+    included: true
+});
+```
+
 ### Todo
   - ng-repeat compile before include template
   - add few defaults notification styles
   - add settings for animate
+  - add all of handling errors to http injector
