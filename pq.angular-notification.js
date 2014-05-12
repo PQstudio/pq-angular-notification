@@ -161,14 +161,16 @@
                         console.log(settings);
                         if (settings.click) {
                             element.click(function() {
-                                scope.pqNotifications.splice(scope.$index, 1);
-                                scope.$apply();
+                                scope.$apply(function() {
+                                    scope.pqNotifications.splice(scope.$index, 1);
+                                });
                             });
                         }
                         if (settings.timeout) {
                             $timeout(function() {
+                                scope.$apply(function(){
                                 scope.pqNotifications.splice(scope.$index, 1);
-                                scope.$apply();
+                                })
                             }, settings.time)
                         }
 
