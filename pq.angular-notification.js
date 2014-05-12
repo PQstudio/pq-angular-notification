@@ -5,6 +5,7 @@
         angular.module('pqNotification.factory', ['ng', 'ngAnimate'])
             .factory('$notification',
                 function($rootScope) {
+                    // alternatively, register the interceptor via an anonymous factory
 
                     try {
 
@@ -108,6 +109,8 @@
                     };
                 }
         );
+
+
         angular.module('pqNotification.directive', ['ng'])
             .directive('pqnotification', ['$notification',
                 function($notification) {
@@ -168,8 +171,8 @@
                         }
                         if (settings.timeout) {
                             $timeout(function() {
-                                scope.$apply(function(){
-                                scope.pqNotifications.splice(scope.$index, 1);
+                                scope.$apply(function() {
+                                    scope.pqNotifications.splice(scope.$index, 1);
                                 })
                             }, settings.time)
                         }
@@ -184,12 +187,24 @@
             ]);
 
 
-        angular.module('pqNotification.setup', ['ng']).run(
-            function($rootScope, $notification) {
+        angular.module('pqNotification.setup', ['ng']).config(
+            function($httpProvider) {
+                $httpProvider.interceptors.push(function($q, $notification) {
+                    return {
+                        'response': function(response) {
+                            console.log(response);
+                            return response || $q.when(response);
+                        },
+                        'responseError': function(rejection) {
+                            // if(rejection.status === 400) {
+                                $notification.call('error', rejection.status + ' ' + rejection.statusText);
+                            // }
+                            return $q.reject(rejection);
+                        }
+                    };
+                });
 
-                // $rootScope.$on('$viewContentLoaded', function() {
-                //     $notification.setup();
-                // });
+
             }
         );
 
