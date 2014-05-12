@@ -33,6 +33,10 @@
                                     400: false,
                                     401: false,
                                     500: false
+                                },
+                                animate: {
+                                    included: true,
+                                    behavior: "fade"
                                 }
 
                             },
@@ -55,6 +59,12 @@
                                 if (typeof obj === 'object') {
                                     this.defaults.httpHandler.included = obj.hasOwnProperty('included') ? obj.included : this.defaults.httpHandler.included;
                                 }
+                            },
+                            animate: function(obj) {
+                                if (typeof obj === 'object') {
+                                    this.defaults.animate.included = obj.hasOwnProperty('included') ? obj.included : this.defaults.animate.included;
+                                    this.defaults.animate.behavior = obj.hasOwnProperty('behavior') ? obj.behavior : this.defaults.animate.behavior;
+                                }
                             }
 
                         };
@@ -76,7 +86,6 @@
                      
                      **/
                         var call = function(name, inject) {
-                            // $rootScope.$emit(name, inject);
                             $rootScope.$broadcast(name, inject);
                         };
 
@@ -130,6 +139,7 @@
                 function($notification) {
 
                     var template;
+                    var animate;
 
                     var controller = function($scope, $notification) {
                         $scope.pqNotifications = [];
@@ -138,8 +148,11 @@
 
                     var link = function(scope, element, attrs) {
 
+                        animate = attrs.animate;
+
+                        console.log(animate);
+
                         scope.$on('error', function() {
-                            template = 'error?';
                             scope.pqNotifications.push({
                                 title: "Błąd",
                                 message: scope.pqnotificationmessage
@@ -158,6 +171,10 @@
                             return $notification.settings.defaults.template.error;
                         };
 
+                        if(animate !== undefined) {
+                            scope.pqnotificationanimate = 'animate-' + animate;
+                        }
+
                     };
 
 
@@ -165,7 +182,7 @@
                         restrict: 'E',
                         replace: true,
                         controller: controller,
-                        template: '<div ng-repeat="pqnotification in pqNotifications" ng-include="getTemplateUrl()"></div>',
+                        template: '<div class="{{pqnotificationanimate}}" ng-repeat="pqnotification in pqNotifications" ng-include="getTemplateUrl()"></div>',
                         link: link
                     };
 
@@ -175,7 +192,6 @@
                 function($notification, $timeout) {
                     var link = function(scope, element, attrs) {
                         var settings = $notification.settings.defaults.remove;
-                        console.log(settings);
                         if (settings.click) {
                             element.click(function() {
                                 scope.$apply(function() {

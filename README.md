@@ -8,6 +8,9 @@ Notification module working with AngularJS
 By Bower
 `bower install pq-angular-notification`
 
+### Dependencies
+ng-animate
+
 ### How to use it
 1. You need to include  `pq.angular-notification.js` after AngularJS script.
 2. Declare pq-angular-notification in your Angular aplication, like
