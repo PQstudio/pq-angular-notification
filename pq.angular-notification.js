@@ -5,7 +5,6 @@
         angular.module('pqNotification.factory', ['ng', 'ngAnimate'])
             .factory('$notification',
                 function($rootScope) {
-                    // alternatively, register the interceptor via an anonymous factory
 
                     try {
 
@@ -172,7 +171,7 @@
                         };
 
                         if(animate !== undefined) {
-                            scope.pqnotificationanimate = 'animate-' + animate;
+                            scope.pqnotificationanimate = animate;
                         }
 
                     };
@@ -182,7 +181,7 @@
                         restrict: 'E',
                         replace: true,
                         controller: controller,
-                        template: '<div class="{{pqnotificationanimate}}" ng-repeat="pqnotification in pqNotifications" ng-include="getTemplateUrl()"></div>',
+                        template: '<div class="animated {{pqnotificationanimate}}" ng-repeat="pqnotification in pqNotifications" ng-include="getTemplateUrl()"></div>',
                         link: link
                     };
 
