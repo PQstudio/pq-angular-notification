@@ -11,6 +11,8 @@ By Bower
 ### Dependencies
 ng-animate
 
+scss/css file with animates
+
 ### How to use it
 1. You need to include  `pq.angular-notification.js` after AngularJS script.
 2. Declare pq-angular-notification in your Angular aplication, like
@@ -53,6 +55,18 @@ $notification.settings.httpHandler({
     included: true
 });
 ```
+
+### Animations
+
+To use animations, add attribute to directive
+
+```html
+<pqnotification animate="slideUp"></pqnotification>
+```
+
+#### List of all animations
+
+  - slideUp
 
 ### Todo
   - ng-repeat compile before include template
