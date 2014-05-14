@@ -231,9 +231,10 @@
             function($httpProvider, $provide) {
 
                 $provide.factory('httpHandler', function($q, $notification) {
-                    var included = $notification.defaults.httpHandler.included;
-                    var codeStatus = $notification.defaults.httpStatus;
-                    var status;
+                    var included = $notification.defaults.httpHandler.included,
+                        codeStatus = $notification.defaults.httpStatus,
+                        status;
+
                     var response = function(response) {
                         return response || $q.when(response);
                     };
@@ -242,9 +243,11 @@
 
                         for (status in codeStatus) {
                             status = parseInt(status);
-                            if (rejection.status === status && codeStatus[status] !== false) {
+                            if (rejection.status === status && codeStatus[status] !== (false || true)) {
+                                console.log("wywolanie 1");
                                 $notification.call('error', codeStatus[status]);
-                            } else {
+                            } else if (rejection.status === status && codeStatus[status] === true) {
+                                console.log("wywolanie 2");
                                 $notification.call('error', rejection.status + ' ' + rejection.statusText);
                             }
                         };
