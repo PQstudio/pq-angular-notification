@@ -182,7 +182,7 @@
                         };
 
                         if (animate !== undefined) {
-                            scope.pqnotificationanimate = animate;
+                            scope.pqnotificationanimate = 'animated-' + animate;
                         }
 
                     };
@@ -244,10 +244,8 @@
                         for (status in codeStatus) {
                             status = parseInt(status);
                             if (rejection.status === status && codeStatus[status] !== (false || true)) {
-                                console.log("wywolanie 1");
                                 $notification.call('error', codeStatus[status]);
                             } else if (rejection.status === status && codeStatus[status] === true) {
-                                console.log("wywolanie 2");
                                 $notification.call('error', rejection.status + ' ' + rejection.statusText);
                             }
                         };
