@@ -56,8 +56,8 @@
                                 }
                             },
                             httpStatus: function(obj) {
-                                if(typeof obj === 'object') {
-                                    for(status in obj) {
+                                if (typeof obj === 'object') {
+                                    for (status in obj) {
                                         this.defaults.httpStatus[status] = obj[status];
                                     }
                                 }
@@ -149,10 +149,18 @@
                     };
 
                     var link = function(scope, element, attrs) {
-
+                        var escape = 27;
                         animate = attrs.animate;
 
                         console.log(animate);
+
+                        $('body').bind('keydown', function(e) {
+                            if (scope.pqNotifications.length !== 0 && e.keyCode === escape) {
+                                scope.$apply(function() {
+                                    scope.pqNotifications.splice(element, 1);
+                                });
+                            }
+                        });
 
                         scope.$on('error', function() {
                             scope.pqNotifications.push({
@@ -225,23 +233,21 @@
                 $provide.factory('httpHandler', function($q, $notification) {
                     var included = $notification.defaults.httpHandler.included;
                     var codeStatus = $notification.defaults.httpStatus;
-                    // var status;
+                    var status;
                     var response = function(response) {
                         return response || $q.when(response);
                     };
 
                     var responseError = function(rejection) {
-                        console.log(rejection.status);
-                        console.log(status);
+
                         for (status in codeStatus) {
+                            status = parseInt(status);
                             if (rejection.status === status && codeStatus[status] !== false) {
-                                console.log(status);
+                                $notification.call('error', codeStatus[status]);
+                            } else {
+                                $notification.call('error', rejection.status + ' ' + rejection.statusText);
                             }
-                            // console.log(defaults.status[status]);
                         };
-                        // if(rejection.status === 400) {
-                        $notification.call('error', rejection.status + ' ' + rejection.statusText + '' + $notification.defaults.httpHandler);
-                        // }
                         return $q.reject(rejection);
                     };
 
