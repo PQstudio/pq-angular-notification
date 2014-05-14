@@ -50,6 +50,10 @@ $notification.settings.remove({
 });
 ```
 
+#### Handlin http requests
+
+If you want to handling error from all http requests, try below
+
 ```javascript
 $notification.settings.httpHandler({
     included: true
