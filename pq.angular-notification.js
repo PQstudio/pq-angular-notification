@@ -27,12 +27,8 @@
                                 },
                                 httpHandler: {
                                     included: true,
-                                    200: false,
-                                    201: false,
-                                    400: false,
-                                    401: false,
-                                    500: false
                                 },
+                                httpStatus: {},
                                 animate: {
                                     included: true,
                                     behavior: "fade"
@@ -57,6 +53,13 @@
                             httpHandler: function(obj) {
                                 if (typeof obj === 'object') {
                                     this.defaults.httpHandler.included = obj.hasOwnProperty('included') ? obj.included : this.defaults.httpHandler.included;
+                                }
+                            },
+                            httpStatus: function(obj) {
+                                if(typeof obj === 'object') {
+                                    for(status in obj) {
+                                        this.defaults.httpStatus[status] = obj[status];
+                                    }
                                 }
                             },
                             animate: function(obj) {
@@ -170,7 +173,7 @@
                             return $notification.settings.defaults.template.error;
                         };
 
-                        if(animate !== undefined) {
+                        if (animate !== undefined) {
                             scope.pqnotificationanimate = animate;
                         }
 
@@ -220,21 +223,30 @@
             function($httpProvider, $provide) {
 
                 $provide.factory('httpHandler', function($q, $notification) {
-                    var defaults = $notification.defaults;
-
+                    var included = $notification.defaults.httpHandler.included;
+                    var codeStatus = $notification.defaults.httpStatus;
+                    // var status;
                     var response = function(response) {
                         return response || $q.when(response);
                     };
 
                     var responseError = function(rejection) {
+                        console.log(rejection.status);
+                        console.log(status);
+                        for (status in codeStatus) {
+                            if (rejection.status === status && codeStatus[status] !== false) {
+                                console.log(status);
+                            }
+                            // console.log(defaults.status[status]);
+                        };
                         // if(rejection.status === 400) {
-                        $notification.call('error', rejection.status + ' ' + rejection.statusText);
+                        $notification.call('error', rejection.status + ' ' + rejection.statusText + '' + $notification.defaults.httpHandler);
                         // }
                         return $q.reject(rejection);
                     };
 
 
-                    if (defaults.httpHandler.included) {
+                    if (included) {
                         return {
                             'response': response,
                             'responseError': responseError
