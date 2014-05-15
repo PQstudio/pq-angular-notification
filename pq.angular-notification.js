@@ -10,7 +10,7 @@
 
                         var type = 0;
                         var notificationType = [];
-
+                        var declaredName = {};
 
                         var settings = {
                             defaults: {
@@ -71,6 +71,11 @@
 
                         };
 
+// Trying to make dynamic directive settings each for directive
+                        var declare = function(string) {
+                            declaredName[string] = settings;
+                            console.log(declaredName);
+                        };
 
                         /**
                      * @ngdoc method
@@ -93,6 +98,7 @@
 
                         var setup = function() {
                             var parameter;
+                            // should be dynamic
                             var notificationType = ['success', 'info', 'warning', 'error'];
 
                             if (notificationType.length === 0) {
@@ -129,6 +135,8 @@
                     return {
                         setup: setup,
                         call: call,
+                        declare: declare,
+                        declaredName: declaredName,
                         settings: settings,
                         defaults: settings.defaults
                     };

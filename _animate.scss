@@ -24,27 +24,27 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 }
 
 
-.animated-slide-vertical.ng-enter {
+.animated-slideVertical.ng-enter {
   height: auto;
   max-height: 0px;
   -webkit-animation-name: slideInUp;
   animation-name: slideInUp;
 }
 
-.animated-slide-vertical.ng-enter-active {
+.animated-slideVertical.ng-enter-active {
   max-height: 1000px;
   -webkit-animation-name: slideInUp;
   animation-name: slideInUp;
 }
 
-.animated-slide-vertical.ng-leave {
+.animated-slideVertical.ng-leave {
   -webkit-animation-name: slideOutDown;
   animation-name: slideOutDown;
   -webkit-transition: max-height 0.5s ease-out;
   max-height: 122px;
 }
 
-.animated-slide-vertical.ng-leave-active {
+.animated-slideVertical.ng-leave-active {
   max-height: 0px;
 }
 
