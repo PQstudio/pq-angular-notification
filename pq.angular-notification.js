@@ -71,10 +71,9 @@
 
                         };
 
-// Trying to make dynamic directive settings each for directive
+                        // Trying to make dynamic directive settings each for directive
                         var declare = function(string) {
                             declaredName[string] = settings;
-                            console.log(declaredName);
                         };
 
                         /**
@@ -99,7 +98,7 @@
                         var setup = function() {
                             var parameter;
                             // should be dynamic
-                            var notificationType = ['success', 'info', 'warning', 'error'];
+                            var notificationType = ['success', 'info', 'warning', 'error', 'error-globalserver'];
 
                             if (notificationType.length === 0) {
                                 throw new Error("You should give some setup names in arguments NotificationService.setup()");
@@ -146,52 +145,59 @@
 
         angular.module('pqNotification.directive', ['ng'])
             .directive('pqnotification', ['$notification',
-                function($notification) {
+                function($notification, $compile) {
 
-                    var template;
                     var animate;
 
                     var controller = function($scope, $notification) {
-                        $scope.pqNotifications = [];
+                        $scope.pqNotifications = {};
                         $notification.setup();
                     };
+
+                    var template = function(element, attrs) {
+                        return '<div class="animated animated-'+ attrs.animate +'" ng-repeat="pqnotification in '+ attrs.name+' track by $index" ng-include="getTemplateUrl()"></div>';
+                    }
 
                     var link = function(scope, element, attrs) {
                         var escape = 27;
                         animate = attrs.animate;
+                        var name = attrs.name;
+                        $notification.declare(name);
 
-                        console.log(animate);
+                        if (name) {
+                            scope[name] = [];
+
+                            scope.$on('error-' + name, function() {
+                                scope[name].push({
+                                    title: "Błąd",
+                                    message: scope.pqnotificationmessage
+                                });
+                               
+                            });
+
+                            scope.$on('success-' + name, function() {
+                                scope.pqNotifications[name].push({
+                                    title: "Udało się",
+                                    message: scope.pqnotificationmessage
+                                })
+                            });
+                        }
+
+
 
                         $('body').bind('keydown', function(e) {
-                            if (scope.pqNotifications.length !== 0 && e.keyCode === escape) {
+                            if (scope[name].length !== 0 && e.keyCode === escape) {
                                 scope.$apply(function() {
-                                    scope.pqNotifications.splice(element, 1);
+                                    scope[name].splice(element, 1);
                                 });
                             }
                         });
 
-                        scope.$on('error', function() {
-                            scope.pqNotifications.push({
-                                title: "Błąd",
-                                message: scope.pqnotificationmessage
-                            });
 
-                        });
-
-                        scope.$on('success', function() {
-                            scope.pqNotifications.push({
-                                title: "Udało się",
-                                message: scope.pqnotificationmessage
-                            })
-                        });
 
                         scope.getTemplateUrl = function() {
                             return $notification.settings.defaults.template.error;
                         };
-
-                        if (animate !== undefined) {
-                            scope.pqnotificationanimate = 'animated-' + animate;
-                        }
 
                     };
 
@@ -200,7 +206,7 @@
                         restrict: 'E',
                         replace: true,
                         controller: controller,
-                        template: '<div class="animated {{pqnotificationanimate}}" ng-repeat="pqnotification in pqNotifications" ng-include="getTemplateUrl()"></div>',
+                        template: template,
                         link: link
                     };
 
@@ -208,7 +214,8 @@
             ])
             .directive('pqnotificationremove', ['$notification', '$timeout',
                 function($notification, $timeout) {
-                    var link = function(scope, element, attrs) {
+                    var link = function(scope, element, attrs, a) {
+                        console.log(a);
                         var settings = $notification.settings.defaults.remove;
                         if (settings.click) {
                             element.click(function() {
@@ -241,6 +248,8 @@
                 $provide.factory('httpHandler', function($q, $notification) {
                     var included = $notification.defaults.httpHandler.included,
                         codeStatus = $notification.defaults.httpStatus,
+                        names = $notification.declaredName,
+                        name,
                         status;
 
                     var response = function(response) {
@@ -248,13 +257,17 @@
                     };
 
                     var responseError = function(rejection) {
+                        for(name in names) {
+                            console.log(names[name]);
+                        }
 
                         for (status in codeStatus) {
                             status = parseInt(status);
                             if (rejection.status === status && codeStatus[status] !== (false || true)) {
-                                $notification.call('error', codeStatus[status]);
+                                $notification.call('error-globalserver', codeStatus[status]);
                             } else if (rejection.status === status && codeStatus[status] === true) {
-                                $notification.call('error', rejection.status + ' ' + rejection.statusText);
+                                $notification.call('error-globalserver', rejection.status + ' ' + rejection.statusText);
+                                $notification.call('error-adshandler', rejection.status + ' ' + rejection.statusText);
                             }
                         };
                         return $q.reject(rejection);
