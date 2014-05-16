@@ -73,7 +73,8 @@ To use animations, add attribute to directive
   - slideUp
 
 ### Todo
-  - ng-repeat compile before include template
-  - add few defaults notification styles
-  - add settings for animate
-  - add all of handling errors to http injector
+  - fix problem with animate with not declare
+  - fix problem with remove for multi directive
+  - add support for default settings
+  - improve docs
+  - add demo
