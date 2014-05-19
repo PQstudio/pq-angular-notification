@@ -11,6 +11,8 @@
                         var type = 0;
                         var notificationType = [];
                         var declaredName = {};
+                        var notificationType = ['success', 'info', 'warning', 'error'];
+
 
                         var settings = {
                             defaults: {
@@ -71,9 +73,16 @@
 
                         };
 
+                        var addNotiicationType = function(string) {
+                            notificationType.push('error-' + string);
+                        };
                         // Trying to make dynamic directive settings each for directive
                         var declare = function(string) {
-                            declaredName[string] = settings;
+                            addNotiicationType(string);
+                            declaredName[string] = {};
+                            angular.copy(settings, declaredName[string]);
+                            console.log(string);
+                            console.log(notificationType);
                         };
 
                         /**
@@ -95,10 +104,10 @@
                             $rootScope.$broadcast(name, inject);
                         };
 
+
                         var setup = function() {
                             var parameter;
                             // should be dynamic
-                            var notificationType = ['success', 'info', 'warning', 'error', 'error-globalserver'];
 
                             if (notificationType.length === 0) {
                                 throw new Error("You should give some setup names in arguments NotificationService.setup()");
@@ -136,6 +145,7 @@
                         call: call,
                         declare: declare,
                         declaredName: declaredName,
+                        addNotiicationType: addNotiicationType,
                         settings: settings,
                         defaults: settings.defaults
                     };
@@ -151,11 +161,10 @@
 
                     var controller = function($scope, $notification) {
                         $scope.pqNotifications = {};
-                        $notification.setup();
                     };
 
                     var template = function(element, attrs) {
-                        return '<div class="animated animated-'+ attrs.animate +'" ng-repeat="pqnotification in '+ attrs.name+' track by $index" ng-include="getTemplateUrl()"></div>';
+                        return '<div class="animated animated-' + attrs.animate + '" ng-repeat="pqnotification in ' + attrs.name + ' track by $index" ng-include="getTemplateUrl()"></div>';
                     }
 
                     var link = function(scope, element, attrs) {
@@ -163,16 +172,17 @@
                         animate = attrs.animate;
                         var name = attrs.name;
                         $notification.declare(name);
-
+                        $notification.setup();
                         if (name) {
                             scope[name] = [];
+
 
                             scope.$on('error-' + name, function() {
                                 scope[name].push({
                                     title: "Błąd",
                                     message: scope.pqnotificationmessage
                                 });
-                               
+
                             });
 
                             scope.$on('success-' + name, function() {
@@ -214,8 +224,7 @@
             ])
             .directive('pqnotificationremove', ['$notification', '$timeout',
                 function($notification, $timeout) {
-                    var link = function(scope, element, attrs, a) {
-                        console.log(a);
+                    var link = function(scope, element, attrs) {
                         var settings = $notification.settings.defaults.remove;
                         if (settings.click) {
                             element.click(function() {
@@ -257,19 +266,29 @@
                     };
 
                     var responseError = function(rejection) {
-                        for(name in names) {
-                            console.log(names[name]);
-                        }
+                        for (name in names) {
+                            // console.log(names[name].defaults);
+                            (function(e) {
+                                for (status in names[e].defaults.httpStatus) {
+                                    // console.log(e);
+                                    // console.log(names[e].defaults.httpStatus[status]);
+                                    // console.log(status);
+                                    status = parseInt(status);
 
-                        for (status in codeStatus) {
-                            status = parseInt(status);
-                            if (rejection.status === status && codeStatus[status] !== (false || true)) {
-                                $notification.call('error-globalserver', codeStatus[status]);
-                            } else if (rejection.status === status && codeStatus[status] === true) {
-                                $notification.call('error-globalserver', rejection.status + ' ' + rejection.statusText);
-                                $notification.call('error-adshandler', rejection.status + ' ' + rejection.statusText);
-                            }
-                        };
+
+                                    if (rejection.status === status && names[e].defaults.httpStatus[status] !== (false || true)) {
+                                        console.log("wywolanie");
+                                        console.log(names[e].defaults);
+                                        $notification.call('error-' + e, names[e].defaults.httpStatus[status]);
+                                    } else if (rejection.status === status && names[e].defaults.httpStatus[status] === true) {
+                                        $notification.call('error-' + e, rejection.status + ' ' + rejection.statusText);
+                                    }
+
+                                };
+                            })(name)
+
+
+                        }
                         return $q.reject(rejection);
                     };
 
