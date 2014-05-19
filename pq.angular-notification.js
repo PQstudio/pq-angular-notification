@@ -75,6 +75,9 @@
 
                         var addNotiicationType = function(string) {
                             notificationType.push('error-' + string);
+                            notificationType.push('success-' + string);
+                            notificationType.push('info-' + string);
+                            notificationType.push('warning-' + string);
                         };
                         // Trying to make dynamic directive settings each for directive
                         var declare = function(string) {
@@ -169,7 +172,7 @@
 
                     var link = function(scope, element, attrs) {
                         var escape = 27;
-                        animate = attrs.animate;
+                        var template;
                         var name = attrs.name;
                         $notification.declare(name);
                         $notification.setup();
@@ -178,7 +181,10 @@
 
 
                             scope.$on('error-' + name, function() {
+                                template = $notification.settings.defaults.template.error;
+
                                 scope[name].push({
+                                    type: 'error',
                                     title: "Błąd",
                                     message: scope.pqnotificationmessage
                                 });
@@ -186,7 +192,10 @@
                             });
 
                             scope.$on('success-' + name, function() {
-                                scope.pqNotifications[name].push({
+                                template = $notification.settings.defaults.template.error;
+
+                                scope[name].push({
+                                    type: 'success',
                                     title: "Udało się",
                                     message: scope.pqnotificationmessage
                                 })
@@ -206,7 +215,7 @@
 
 
                         scope.getTemplateUrl = function() {
-                            return $notification.settings.defaults.template.error;
+                            return template;
                         };
 
                     };
@@ -226,10 +235,14 @@
                 function($notification, $timeout) {
                     var link = function(scope, element, attrs) {
                         var settings = $notification.settings.defaults.remove;
-                        if (settings.click) {
+                        // console.log($notification.declaredName[attrs.pqnotificationremove]);
+                        console.log(scope.$parent.this[attrs.pqnotificationremove]);
+                        if ($notification.declaredName[attrs.pqnotificationremove].defaults.remove.click) {
                             element.click(function() {
+                                console.log("udalo sie clicknac");
                                 scope.$apply(function() {
-                                    scope.pqNotifications.splice(scope.$index, 1);
+                                    console.log(scope.$index);
+                                    scope.$parent.this[attrs.pqnotificationremove].splice(scope.$index, 1);
                                 });
                             });
                         }
@@ -279,7 +292,12 @@
                                     if (rejection.status === status && names[e].defaults.httpStatus[status] !== (false || true)) {
                                         console.log("wywolanie");
                                         console.log(names[e].defaults);
-                                        $notification.call('error-' + e, names[e].defaults.httpStatus[status]);
+                                        if (names[e].defaults.httpStatus[status].type === "error") {
+                                            $notification.call('error-' + e, names[e].defaults.httpStatus[status].message);
+                                        }
+                                        else if (names[e].defaults.httpStatus[status].type === "success") {
+                                            $notification.call('success-' + e, names[e].defaults.httpStatus[status].message);
+                                        }
                                     } else if (rejection.status === status && names[e].defaults.httpStatus[status] === true) {
                                         $notification.call('error-' + e, rejection.status + ' ' + rejection.statusText);
                                     }
