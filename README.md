@@ -23,9 +23,9 @@ angular.module("app", ['pqNotification'])
 ```javascript
 run(function( $notification )
 ```
-4. Add directive to your html view when notification should be show
+4. Add directive to your html view when notification should be show. Already you need to declare attribute name, for all of directive. Is necessary to distinguishing settings each directive.
 ```html
-<pqnotification></pqnotification>
+<pqnotification name="globalhandler"></pqnotification>
 ```
 
 ### Defaults settings
