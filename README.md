@@ -73,7 +73,6 @@ To use animations, add attribute to directive
   - slideUp
 
 ### Todo
-  - fix problem with animate with not declare
   - add support for default settings
   - improve docs
   - add demo
