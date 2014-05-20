@@ -156,8 +156,12 @@
 
                     var template = function(element, attrs) {
                         $notification.declare(attrs.name);
+                        var animate;
+                        if (attrs.animate) {
+                            animate = 'animated animated-' + attrs.animate;
+                        }
 
-                        return '<div class="animated animated-' + attrs.animate + '" ng-repeat="pqnotification in ' + attrs.name + ' track by $index" ng-include="getTemplateUrl()"></div>';
+                        return '<div class="' + animate + '" ng-repeat="pqnotification in ' + attrs.name + ' track by $index" ng-include="getTemplateUrl()"></div>';
                     }
 
                     var link = function(scope, element, attrs) {
