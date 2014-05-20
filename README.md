@@ -28,34 +28,61 @@ run(function( $notification )
 <pqnotification name="globalhandler"></pqnotification>
 ```
 
+
+### Very important
+All of settings must be in .run and $on viewContentLoaded. 
+
+Example:
+```javascript
+angular.module("app", ['pqNotification', 'ngAnimate'])
+  .run(function($rootScope, $notification) {
+
+    $rootScope.$on('$viewContentLoaded', function() {
+
+      $notification.declaredName.adshandler.httpStatus({
+        400: {
+          type: 'error',
+          message: "Nowy message"
+        }
+      });
+
+      $notification.declaredName.globalserver.httpHandler({
+        included: false
+      });
+
+      $notification.declaredName.globalserver.templateUrl({
+        template: 'notification/errorglobalserver.html'
+      });
+
+    });
+
+
+
+  });
+```
+
+
 ### Defaults settings
 Src to notification template
 
 ```javascript
-$notification.settings.templateUrl({
-    error: 'notification/error.html',
-    success: 'notification/success.html',
-    info: 'notification/info.html',
-    warning: 'notification/warning.html'
-});
+    template: 'notification/error.html'
 ```
 
 Behavior to remove notification elements
 
 ```javascript
-$notification.settings.remove({
     click: true,
     timeout: false,
     time: 2000
-});
 ```
 
-#### Handlin http requests
+#### Handling http requests
 
 If you want to handling error from all http requests, try below
-
+nameofdirective is your declared attribute name
 ```javascript
-$notification.settings.httpHandler({
+$notification.declaredname.nameofdirective.defaults.httpHandler({
     included: true
 });
 ```
@@ -65,15 +92,21 @@ $notification.settings.httpHandler({
 To use animations, add attribute to directive
 
 ```html
-<pqnotification animate="slideUp"></pqnotification>
+<pqnotification animate="slideVerticalUp"></pqnotification>
+```
+
+### Remove event
+Inside directive can be whatever you want.
+```html
+<pqnotificationremove="examplenotification">x</pqnotificationremove>
 ```
 
 #### List of all animations
 
-  - slideUp
+  - slideVerticalUp
+  - slideVerticalDown
 
 ### Todo
-  - fix problem with animate with not declare
   - add support for default settings
   - improve docs
   - add demo
