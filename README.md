@@ -33,10 +33,7 @@ Src to notification template
 
 ```javascript
 $notification.settings.templateUrl({
-    error: 'notification/error.html',
-    success: 'notification/success.html',
-    info: 'notification/info.html',
-    warning: 'notification/warning.html'
+    template: 'notification/error.html'
 });
 ```
 
@@ -53,9 +50,9 @@ $notification.settings.remove({
 #### Handlin http requests
 
 If you want to handling error from all http requests, try below
-
+nameofdirective is your declared attribute name
 ```javascript
-$notification.settings.httpHandler({
+$notification.declaredname.nameofdirective.defaults.httpHandler({
     included: true
 });
 ```
@@ -65,12 +62,13 @@ $notification.settings.httpHandler({
 To use animations, add attribute to directive
 
 ```html
-<pqnotification animate="slideUp"></pqnotification>
+<pqnotification animate="slideVerticalUp"></pqnotification>
 ```
 
 #### List of all animations
 
-  - slideUp
+  - slideVerticalUp
+  - slideVerticalDown
 
 ### Todo
   - add support for default settings
