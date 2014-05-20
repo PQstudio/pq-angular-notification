@@ -28,6 +28,40 @@ run(function( $notification )
 <pqnotification name="globalhandler"></pqnotification>
 ```
 
+
+### Very important
+All of settings must be in .run and $on viewContentLoaded. 
+
+Example:
+```javascript
+angular.module("app", ['pqNotification', 'ngAnimate'])
+  .run(function($rootScope, $notification) {
+
+    $rootScope.$on('$viewContentLoaded', function() {
+
+      $notification.declaredName.adshandler.httpStatus({
+        400: {
+          type: 'error',
+          message: "Nowy message"
+        }
+      });
+
+      $notification.declaredName.globalserver.httpHandler({
+        included: false
+      });
+
+      $notification.declaredName.globalserver.templateUrl({
+        template: 'notification/errorglobalserver.html'
+      });
+
+    });
+
+
+
+  });
+```
+
+
 ### Defaults settings
 Src to notification template
 
