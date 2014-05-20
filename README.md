@@ -66,22 +66,18 @@ angular.module("app", ['pqNotification', 'ngAnimate'])
 Src to notification template
 
 ```javascript
-$notification.settings.templateUrl({
     template: 'notification/error.html'
-});
 ```
 
 Behavior to remove notification elements
 
 ```javascript
-$notification.settings.remove({
     click: true,
     timeout: false,
     time: 2000
-});
 ```
 
-#### Handlin http requests
+#### Handling http requests
 
 If you want to handling error from all http requests, try below
 nameofdirective is your declared attribute name
@@ -97,6 +93,12 @@ To use animations, add attribute to directive
 
 ```html
 <pqnotification animate="slideVerticalUp"></pqnotification>
+```
+
+### Remove event
+Inside directive can be whatever you want.
+```html
+<pqnotificationremove="examplenotification">x</pqnotificationremove>
 ```
 
 #### List of all animations
