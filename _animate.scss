@@ -15,8 +15,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 .animated {
-  -webkit-animation-duration: 0s;
-  animation-duration: 0s;
+  -webkit-animation-duration: 0.5s;
+  animation-duration: 0.5s;
   -webkit-animation-fill-mode: both;
   animation-fill-mode: both;
   -webkit-transition: max-height 1s ease-out;
@@ -24,27 +24,51 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 }
 
 
-.animated-slideVertical.ng-enter {
+.animated-slideVerticalUp.ng-enter {
   height: auto;
   max-height: 0px;
   -webkit-animation-name: slideInUp;
   animation-name: slideInUp;
 }
 
-.animated-slideVertical.ng-enter-active {
+.animated-slideVerticalUp.ng-enter-active {
   max-height: 1000px;
   -webkit-animation-name: slideInUp;
   animation-name: slideInUp;
 }
 
-.animated-slideVertical.ng-leave {
+.animated-slideVerticalUp.ng-leave {
   -webkit-animation-name: slideOutDown;
   animation-name: slideOutDown;
   -webkit-transition: max-height 0.5s ease-out;
   max-height: 122px;
 }
 
-.animated-slideVertical.ng-leave-active {
+.animated-slideVerticalUp.ng-leave-active {
+  max-height: 0px;
+}
+
+.animated-slideVerticalDown.ng-enter {
+  height: auto;
+  max-height: 0px;
+  -webkit-animation-name: slideInDown;
+  animation-name: slideInDown;
+}
+
+.animated-slideVerticalDown.ng-enter-active {
+  max-height: 1000px;
+  -webkit-animation-name: slideInDown;
+  animation-name: slideInDown;
+}
+
+.animated-slideVerticalDown.ng-leave {
+  -webkit-animation-name: slideOutDown;
+  animation-name: slideOutDown;
+  -webkit-transition: max-height 0.5s ease-in;
+  max-height: 122px;
+}
+
+.animated-slideVerticalDown.ng-leave-active {
   max-height: 0px;
 }
 
