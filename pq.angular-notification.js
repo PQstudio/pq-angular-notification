@@ -12,16 +12,12 @@
                         var notificationType = [];
                         var declaredName = {};
                         var notificationType = ['success', 'info', 'warning', 'error'];
+                        var stringCallback = "nie pierdole sie, grejfrut";
 
 
                         var settings = {
                             defaults: {
-                                template: {
-                                    error: 'notification/error.html',
-                                    success: 'notification/success.html',
-                                    info: 'notification/info.html',
-                                    warning: 'notification/warning.html'
-                                },
+                                template: 'notification/error.html',
                                 remove: {
                                     click: true,
                                     timeout: false,
@@ -39,10 +35,7 @@
                             },
                             templateUrl: function(obj) {
                                 if (typeof obj === 'object') {
-                                    this.defaults.template.error = obj.hasOwnProperty('error') ? obj.error : this.defaults.template.error;
-                                    this.defaults.template.success = obj.hasOwnProperty('success') ? obj.success : this.defaults.template.success;
-                                    this.defaults.template.info = obj.hasOwnProperty('info') ? obj.info : this.defaults.template.info;
-                                    this.defaults.template.warning = obj.hasOwnProperty('warning') ? obj.warning : this.defaults.template.warning;
+                                    this.defaults.template = obj.hasOwnProperty('template') ? obj.template : this.defaults.template;
                                 }
                             },
                             remove: function(obj) {
@@ -73,7 +66,7 @@
 
                         };
 
-                        var addNotiicationType = function(string) {
+                        var addNotificationType = function(string) {
                             notificationType.push('error-' + string);
                             notificationType.push('success-' + string);
                             notificationType.push('info-' + string);
@@ -81,11 +74,9 @@
                         };
                         // Trying to make dynamic directive settings each for directive
                         var declare = function(string) {
-                            addNotiicationType(string);
+                            addNotificationType(string);
                             declaredName[string] = {};
                             angular.copy(settings, declaredName[string]);
-                            console.log(string);
-                            console.log(notificationType);
                         };
 
                         /**
@@ -111,21 +102,17 @@
                         var setup = function() {
                             var parameter;
                             // should be dynamic
+                            // console.log(this);
 
                             if (notificationType.length === 0) {
                                 throw new Error("You should give some setup names in arguments NotificationService.setup()");
                             }
-
+                            var that = this;
                             var onFunction = function(notificationType) {
-
+                                // console.log(that);
                                 $rootScope.$on(notificationType, function(event, callback) {
-                                    type = typeof callback;
-                                    if (type === "function") {
-                                        return callback();
-                                    } else if (type === "string") {
-                                        $rootScope[notificationType] = callback;
-                                        return $rootScope.pqnotificationmessage = callback;
-                                    }
+                                        console.log(that.stringCallback);
+                                        return that.stringCallback = callback;
                                 });
 
                             };
@@ -148,9 +135,10 @@
                         call: call,
                         declare: declare,
                         declaredName: declaredName,
-                        addNotiicationType: addNotiicationType,
+                        addNotificationType: addNotificationType,
                         settings: settings,
-                        defaults: settings.defaults
+                        defaults: settings.defaults,
+                        stringCallback: stringCallback
                     };
                 }
         );
@@ -167,55 +155,68 @@
                     };
 
                     var template = function(element, attrs) {
+                        $notification.declare(attrs.name);
+
                         return '<div class="animated animated-' + attrs.animate + '" ng-repeat="pqnotification in ' + attrs.name + ' track by $index" ng-include="getTemplateUrl()"></div>';
                     }
 
                     var link = function(scope, element, attrs) {
                         var escape = 27;
-                        var template;
                         var name = attrs.name;
-                        $notification.declare(name);
                         $notification.setup();
                         if (name) {
                             scope[name] = [];
 
 
                             scope.$on('error-' + name, function() {
-                                template = $notification.settings.defaults.template.error;
-
+                                console.log($notification.stringCallback);
                                 scope[name].push({
                                     type: 'error',
                                     title: "Błąd",
-                                    message: scope.pqnotificationmessage
+                                    message: $notification.stringCallback
                                 });
-
+                                console.log($notification.declaredName[name].defaults.template);
                             });
 
                             scope.$on('success-' + name, function() {
-                                template = $notification.settings.defaults.template.error;
-
                                 scope[name].push({
                                     type: 'success',
                                     title: "Udało się",
-                                    message: scope.pqnotificationmessage
-                                })
+                                    message: $notification.stringCallback
+                                });
+                            });
+
+                             scope.$on('info-' + name, function() {
+                                scope[name].push({
+                                    type: 'info',
+                                    title: "Udało się",
+                                    message: $notification.stringCallback
+                                });
+                            });
+
+                             scope.$on('warning-' + name, function() {
+                                scope[name].push({
+                                    type: 'warning',
+                                    title: "Udało się",
+                                    message: $notification.stringCallback
+                                });
                             });
                         }
 
 
-
-                        $('body').bind('keydown', function(e) {
-                            if (scope[name].length !== 0 && e.keyCode === escape) {
-                                scope.$apply(function() {
-                                    scope[name].splice(element, 1);
-                                });
-                            }
-                        });
+//should be working better
+                        // $('body').bind('keydown', function(e) {
+                        //     if (scope[name].length !== 0 && e.keyCode === escape) {
+                        //         scope.$apply(function() {
+                        //             scope[name].splice(element, 1);
+                        //         });
+                        //     }
+                        // });
 
 
 
                         scope.getTemplateUrl = function() {
-                            return template;
+                            return $notification.declaredName[name].defaults.template;
                         };
 
                     };
@@ -224,6 +225,9 @@
                     return {
                         restrict: 'E',
                         replace: true,
+                        scope: {
+                            getTemplateUrl: '&'
+                        },
                         controller: controller,
                         template: template,
                         link: link
@@ -235,13 +239,9 @@
                 function($notification, $timeout) {
                     var link = function(scope, element, attrs) {
                         var settings = $notification.settings.defaults.remove;
-                        // console.log($notification.declaredName[attrs.pqnotificationremove]);
-                        console.log(scope.$parent.this[attrs.pqnotificationremove]);
                         if ($notification.declaredName[attrs.pqnotificationremove].defaults.remove.click) {
                             element.click(function() {
-                                console.log("udalo sie clicknac");
                                 scope.$apply(function() {
-                                    console.log(scope.$index);
                                     scope.$parent.this[attrs.pqnotificationremove].splice(scope.$index, 1);
                                 });
                             });
@@ -280,22 +280,15 @@
 
                     var responseError = function(rejection) {
                         for (name in names) {
-                            // console.log(names[name].defaults);
                             (function(e) {
                                 for (status in names[e].defaults.httpStatus) {
-                                    // console.log(e);
-                                    // console.log(names[e].defaults.httpStatus[status]);
-                                    // console.log(status);
                                     status = parseInt(status);
 
 
                                     if (rejection.status === status && names[e].defaults.httpStatus[status] !== (false || true)) {
-                                        console.log("wywolanie");
-                                        console.log(names[e].defaults);
                                         if (names[e].defaults.httpStatus[status].type === "error") {
                                             $notification.call('error-' + e, names[e].defaults.httpStatus[status].message);
-                                        }
-                                        else if (names[e].defaults.httpStatus[status].type === "success") {
+                                        } else if (names[e].defaults.httpStatus[status].type === "success") {
                                             $notification.call('success-' + e, names[e].defaults.httpStatus[status].message);
                                         }
                                     } else if (rejection.status === status && names[e].defaults.httpStatus[status] === true) {
