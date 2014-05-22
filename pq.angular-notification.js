@@ -102,16 +102,13 @@
                         var setup = function() {
                             var parameter;
                             // should be dynamic
-                            // console.log(this);
 
                             if (notificationType.length === 0) {
                                 throw new Error("You should give some setup names in arguments NotificationService.setup()");
                             }
                             var that = this;
                             var onFunction = function(notificationType) {
-                                // console.log(that);
                                 $rootScope.$on(notificationType, function(event, callback) {
-                                        console.log(that.stringCallback);
                                         return that.stringCallback = callback;
                                 });
 
@@ -173,13 +170,11 @@
 
 
                             scope.$on('error-' + name, function() {
-                                console.log($notification.stringCallback);
                                 scope[name].push({
                                     type: 'error',
                                     title: "Błąd",
                                     message: $notification.stringCallback
                                 });
-                                console.log($notification.declaredName[name].defaults.template);
                             });
 
                             scope.$on('success-' + name, function() {
