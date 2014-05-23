@@ -260,14 +260,9 @@
                             });
                         }
                         if ($notification.declaredName[attrs.pqnotificationremove].defaults.remove.timeout) {
-                            for (var i = 0; i < scope.this[attrs.pqnotificationremove].length; i++) {
-                                $timeout(function() {
-                                    scope.$apply(function() {
-                                        scope.this[attrs.pqnotificationremove].splice(scope.$index, 1);
-                                    })
-                                }, $notification.declaredName[attrs.pqnotificationremove].defaults.remove.time)
-                            }
-
+                            $timeout(function() {
+                                scope.this[attrs.pqnotificationremove].splice(0, 1);
+                            }, $notification.declaredName[attrs.pqnotificationremove].defaults.remove.time)
                         }
 
                     };
@@ -291,6 +286,26 @@
                         status;
 
                     var response = function(response) {
+                        // is not working fine : <
+                        // for (name in names) {
+                        //     (function(e) {
+                        //         for (status in names[e].defaults.httpStatus) {
+                        //             status = parseInt(status);
+
+                        //             console.log(response);
+                        //             if (response.status === status && names[e].defaults.httpStatus[status] !== (false || true)) {
+                        //                 if (names[e].defaults.httpStatus[status].type === "error") {
+                        //                     $notification.call('error-' + e, names[e].defaults.httpStatus[status].message);
+                        //                 } else if (names[e].defaults.httpStatus[status].type === "success") {
+                        //                     $notification.call('success-' + e, names[e].defaults.httpStatus[status].message);
+                        //                 }
+                        //             } else if (response.status === status && names[e].defaults.httpStatus[status] === true) {
+                        //                 $notification.call('error-' + e, response.status + ' ' + response.statusText);
+                        //             }
+
+                        //         };
+                        //     })(name)
+                        // }
                         return response || $q.when(response);
                     };
 
@@ -300,7 +315,7 @@
                                 for (status in names[e].defaults.httpStatus) {
                                     status = parseInt(status);
 
-
+                                    console.log(rejection);
                                     if (rejection.status === status && names[e].defaults.httpStatus[status] !== (false || true)) {
                                         if (names[e].defaults.httpStatus[status].type === "error") {
                                             $notification.call('error-' + e, names[e].defaults.httpStatus[status].message);
