@@ -18,6 +18,12 @@
                         var settings = {
                             defaults: {
                                 template: 'notification/error.html',
+                                title: {
+                                    error: 'Error',
+                                    success: 'Success',
+                                    warning: 'Warning',
+                                    info: 'Info'
+                                },
                                 remove: {
                                     click: true,
                                     timeout: false,
@@ -36,6 +42,14 @@
                             templateUrl: function(obj) {
                                 if (typeof obj === 'object') {
                                     this.defaults.template = obj.hasOwnProperty('template') ? obj.template : this.defaults.template;
+                                }
+                            },
+                            title: function(obj) {
+                                if(typeof obj === 'object') {
+                                    this.defaults.title.error = obj.hasOwnProperty('error') ? obj.error : this.defaults.title.error;
+                                    this.defaults.title.success = obj.hasOwnProperty('success') ? obj.success : this.defaults.title.success;
+                                    this.defaults.title.warning = obj.hasOwnProperty('warning') ? obj.warning : this.defaults.title.warning;
+                                    this.defaults.title.info = obj.hasOwnProperty('info') ? obj.info : this.defaults.title.info;
                                 }
                             },
                             remove: function(obj) {
@@ -172,7 +186,7 @@
                             scope.$on('error-' + name, function() {
                                 scope[name].push({
                                     type: 'error',
-                                    title: "Błąd",
+                                    title: $notification.declaredName[name].defaults.title.error,
                                     message: $notification.stringCallback
                                 });
                             });
@@ -180,7 +194,7 @@
                             scope.$on('success-' + name, function() {
                                 scope[name].push({
                                     type: 'success',
-                                    title: "Udało się",
+                                    title: $notification.declaredName[name].defaults.title.success,
                                     message: $notification.stringCallback
                                 });
                             });
@@ -188,7 +202,7 @@
                              scope.$on('info-' + name, function() {
                                 scope[name].push({
                                     type: 'info',
-                                    title: "Udało się",
+                                    title: $notification.declaredName[name].defaults.title.info,
                                     message: $notification.stringCallback
                                 });
                             });
@@ -196,7 +210,7 @@
                              scope.$on('warning-' + name, function() {
                                 scope[name].push({
                                     type: 'warning',
-                                    title: "Udało się",
+                                    title: $notification.declaredName[name].defaults.title.warning,
                                     message: $notification.stringCallback
                                 });
                             });
