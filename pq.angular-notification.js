@@ -45,7 +45,7 @@
                                 }
                             },
                             title: function(obj) {
-                                if(typeof obj === 'object') {
+                                if (typeof obj === 'object') {
                                     this.defaults.title.error = obj.hasOwnProperty('error') ? obj.error : this.defaults.title.error;
                                     this.defaults.title.success = obj.hasOwnProperty('success') ? obj.success : this.defaults.title.success;
                                     this.defaults.title.warning = obj.hasOwnProperty('warning') ? obj.warning : this.defaults.title.warning;
@@ -123,7 +123,7 @@
                             var that = this;
                             var onFunction = function(notificationType) {
                                 $rootScope.$on(notificationType, function(event, callback) {
-                                        return that.stringCallback = callback;
+                                    return that.stringCallback = callback;
                                 });
 
                             };
@@ -199,7 +199,7 @@
                                 });
                             });
 
-                             scope.$on('info-' + name, function() {
+                            scope.$on('info-' + name, function() {
                                 scope[name].push({
                                     type: 'info',
                                     title: $notification.declaredName[name].defaults.title.info,
@@ -207,7 +207,7 @@
                                 });
                             });
 
-                             scope.$on('warning-' + name, function() {
+                            scope.$on('warning-' + name, function() {
                                 scope[name].push({
                                     type: 'warning',
                                     title: $notification.declaredName[name].defaults.title.warning,
@@ -217,7 +217,7 @@
                         }
 
 
-//should be working better
+                        //should be working better
                         // $('body').bind('keydown', function(e) {
                         //     if (scope[name].length !== 0 && e.keyCode === escape) {
                         //         scope.$apply(function() {
@@ -259,12 +259,16 @@
                                 });
                             });
                         }
-                        if (settings.timeout) {
-                            $timeout(function() {
-                                scope.$apply(function() {
-                                    scope.pqNotifications.splice(scope.$index, 1);
-                                })
-                            }, settings.time)
+                        if ($notification.declaredName[attrs.pqnotificationremove].defaults.remove.timeout) {
+                            console.log(scope.this[attrs.pqnotificationremove]);
+                            for (var i = 0; i < scope.this[attrs.pqnotificationremove].length; i++) {
+                                $timeout(function() {
+                                    scope.$apply(function() {
+                                        scope.this[attrs.pqnotificationremove].splice(scope.$index, 1);
+                                    })
+                                }, $notification.declaredName[attrs.pqnotificationremove].defaults.remove.time)
+                            }
+
                         }
 
                     };
