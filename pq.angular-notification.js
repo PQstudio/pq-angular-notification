@@ -260,7 +260,6 @@
                             });
                         }
                         if ($notification.declaredName[attrs.pqnotificationremove].defaults.remove.timeout) {
-                            console.log(scope.this[attrs.pqnotificationremove]);
                             for (var i = 0; i < scope.this[attrs.pqnotificationremove].length; i++) {
                                 $timeout(function() {
                                     scope.$apply(function() {
